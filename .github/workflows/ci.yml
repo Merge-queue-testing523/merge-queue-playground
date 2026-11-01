@@ -1,0 +1,19 @@
+name: CI
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show what is being tested
+        run: |
+          echo "event=$GITHUB_EVENT_NAME ref=$GITHUB_REF sha=$GITHUB_SHA"
+          git log --oneline -5
+      - name: Validate
+        run: ./check.sh
