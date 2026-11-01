@@ -12,8 +12,8 @@ tools/watch.sh     # leave this running in a second terminal
 ```
 
 - **Queue page:** https://github.com/Merge-queue-testing523/merge-queue-playground/queue/main
-- **As yourself:** click **Merge when ready** on the PR, or run `tools/q.sh me add 1`.
-- **As StarmaniaBot:** run `tools/q.sh bot add 2`. It has **write** access to start with.
+- **As yourself:** click **Merge when ready** on the PR, or run `tools/q.sh me add 13`.
+- **As StarmaniaBot:** run `tools/q.sh bot add 1`. It has **write** access to start with.
 - **Other actions:** `tools/q.sh <me|bot> jump <pr>`, `tools/q.sh <me|bot> remove <pr>`.
 - **More PRs:** `tools/new-pr.sh <me|bot> <name>`.
 
@@ -21,7 +21,7 @@ The "What we saw" notes come from API runs with a 45-second CI on [merge-queue-l
 
 ## Mission 1: a good run
 
-Queue #1, then #2 within about a minute. Watch the temporary branches.
+Queue #13 as yourself, then #1 as the bot within about a minute. Watch the temporary branches.
 
 <details><summary>What we saw</summary>
 
@@ -30,7 +30,7 @@ Each PR gets a `gh-readonly-queue/main/pr-N-<sha>` branch and its own `merge_gro
 
 ## Mission 2: a PR that is already broken
 
-#3 fails its own check. Try to queue it, with the button and with `tools/q.sh me add 3`.
+#2 fails its own check. Try to queue it, with the button and with `tools/q.sh me add 2`.
 
 <details><summary>What we saw</summary>
 
@@ -39,43 +39,43 @@ The API refuses: `Pull request has failing required statuses`. It never enters t
 
 ## Mission 3: a failure inside the queue
 
-#4 passes on `pull_request` and fails only on `merge_group`, like a flaky test. Queue #4, then #5 behind it. Watch what happens to #5.
+#3 passes on `pull_request` and fails only on `merge_group`, like a flaky test. Queue #3, then #4 behind it. Watch what happens to #4.
 
 <details><summary>What we saw</summary>
 
-#4's run fails and it's removed about 30 seconds later with reason `failed_checks`. #5's first run also fails because it included #4. #5 is then rebuilt without #4, passes and merges. A failure costs everyone behind it a rebuild. ([lab #4](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/4), [lab #5](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/5))
+#3's run fails and it's removed about 30 seconds later with reason `failed_checks`. #4's first run also fails because it included #3. #4 is then rebuilt without #3, passes and merges. A failure costs everyone behind it a rebuild. ([lab #4](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/4), [lab #5](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/5))
 </details>
 
 ## Mission 4: PRs that only fail together
 
-#6 and #7 each add two files, and the limit is three. Both are green. This is the problem a merge queue exists to solve. Queue #6, then #7. Afterwards, look at #7's checks and try queueing it again.
+#5 and #6 each add two files, and the limit is three. Both are green. This is the problem a merge queue exists to solve. Queue #5, then #6. Afterwards, look at #6's checks and try queueing it again.
 
 <details><summary>What we saw</summary>
 
-#6 merges and #7 is removed with `failed_checks`. #7 **still shows a green check**, because its PR check ran against the old `main`, and GitHub accepts it back into the queue. Without the queue, it would have broken `main`. ([lab #7](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/7))
+#5 merges and #6 is removed with `failed_checks`. #6 **still shows a green check**, because its PR check ran against the old `main`, and GitHub accepts it back into the queue. Without the queue, it would have broken `main`. ([lab #7](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/7))
 </details>
 
 ## Mission 5: a real merge conflict
 
-#8 and #9 create the same file with different content. Both show as mergeable. Queue #8, then #9.
+#7 and #8 create the same file with different content. Both show as mergeable. Queue #7, then #8.
 
 <details><summary>What we saw</summary>
 
-#9 goes to state `UNMERGEABLE` straight away, gets no temporary branch and no CI run, and is removed with `merge_conflict` once #8 merges. ([lab #17](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/17))
+#8 goes to state `UNMERGEABLE` straight away, gets no temporary branch and no CI run, and is removed with `merge_conflict` once #7 merges. ([lab #17](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/17))
 </details>
 
 ## Mission 6: jumping the queue
 
-Queue #10 and #11. Wait until their runs are in progress, then run `tools/q.sh bot jump 12`. Count the runs afterwards in `tools/watch.sh`.
+Queue #9 and #10. Wait until their runs are in progress, then run `tools/q.sh bot jump 11`. Count the runs afterwards in `tools/watch.sh`.
 
 <details><summary>What we saw</summary>
 
-#12 moves to position 1, and #10 and #11 are rebuilt, so each runs CI twice. **The bot could do this with write access alone**, so anyone who can queue can make everyone else rebuild. If you jump before any build has started, nothing gets rebuilt. ([lab #11](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/11), [lab #13](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/13))
+#11 moves to position 1, and #9 and #10 are rebuilt, so each runs CI twice. **The bot could do this with write access alone**, so anyone who can queue can make everyone else rebuild. If you jump before any build has started, nothing gets rebuilt. ([lab #11](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/11), [lab #13](https://github.com/Merge-queue-testing523/merge-queue-lab/pull/13))
 </details>
 
 ## Mission 7: interfering with a queued PR
 
-Queue #13 as yourself. While it's queued, remove it as the bot with `tools/q.sh bot remove 13`. Queue it again and try pushing a commit to its branch.
+Queue #12 as yourself. While it's queued, remove it as the bot with `tools/q.sh bot remove 12`. Queue it again and try pushing a commit to its branch.
 
 <details><summary>What we saw</summary>
 
